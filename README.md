@@ -1,5 +1,8 @@
 # RepoToPrompt
 
+[![npm version](https://img.shields.io/npm/v/repotoprompt.svg)](https://www.npmjs.com/package/repotoprompt)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
 **Give AI the right files, not every file.**
 
 RepoToPrompt is an open-source CLI that turns a local repository into a task-aware, token-budgeted context pack for AI coding assistants like ChatGPT, Claude, Cursor, Windsurf, and Gemini.
@@ -153,13 +156,13 @@ repotoprompt . --target json --output context.json
 
 ## Modes
 
-| Mode | Use it for | Behavior |
-|---|---|---|
-| `full` | Whole repo understanding | Includes all safe scannable files |
-| `focused` | Most normal coding tasks | Prioritizes goal/config/entrypoint files |
-| `minimal` | Small prompts | Keeps only high-scoring files |
-| `debug` | Bug fixing | Prioritizes tests, handlers, routes, error-related files |
-| `review` | Pre-PR review | Prioritizes changed files and nearby context |
+| Mode      | Use it for               | Behavior                                                 |
+| --------- | ------------------------ | -------------------------------------------------------- |
+| `full`    | Whole repo understanding | Includes all safe scannable files                        |
+| `focused` | Most normal coding tasks | Prioritizes goal/config/entrypoint files                 |
+| `minimal` | Small prompts            | Keeps only high-scoring files                            |
+| `debug`   | Bug fixing               | Prioritizes tests, handlers, routes, error-related files |
+| `review`  | Pre-PR review            | Prioritizes changed files and nearby context             |
 
 ## Output structure
 
