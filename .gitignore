@@ -1,0 +1,13 @@
+node_modules
+dist
+coverage
+*.log
+.DS_Store
+repotoprompt-output.md
+*.local.md
+
+# RepoToPrompt generated outputs
+repotoprompt-output.md
+self-context.md
+minimal-context.md
+context.json

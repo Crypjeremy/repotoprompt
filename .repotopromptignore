@@ -1,0 +1,4 @@
+# Extra ignore rules for RepoToPrompt.
+# These are merged with .gitignore and built-in defaults.
+*.local
+.env*

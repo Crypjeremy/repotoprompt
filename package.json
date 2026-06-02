@@ -1,0 +1,50 @@
+{
+  "name": "repotoprompt",
+  "version": "1.0.0",
+  "description": "Task-aware repo context packs for AI coding assistants.",
+  "type": "module",
+  "bin": {
+    "repotoprompt": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "build": "tsc",
+    "start": "node dist/cli.js",
+    "check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "llm",
+    "ai",
+    "prompt",
+    "codebase",
+    "context",
+    "cli",
+    "chatgpt",
+    "claude",
+    "cursor",
+    "gemini"
+  ],
+  "author": "crypjeremy",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^14.0.2",
+    "fast-glob": "^3.3.3",
+    "ignore": "^7.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.14"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
