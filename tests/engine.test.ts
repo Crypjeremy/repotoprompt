@@ -1,7 +1,11 @@
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { buildTree } from '../src/utils/tree.js';
 import { detectSecrets } from '../src/engine/detectSecrets.js';
 import { applyBudget } from '../src/engine/applyBudget.js';
+import { loadConfig, writeInitialConfig } from '../src/config/loadConfig.js';
 import type { RepoFile } from '../src/types.js';
 
 function file(path: string, tokens: number, score: number): RepoFile {
@@ -35,5 +39,17 @@ describe('budgeting', () => {
   it('keeps files within budget', () => {
     const selected = applyBudget([file('a.ts', 1000, 90), file('b.ts', 1000, 80), file('c.ts', 1000, 70)], 2500);
     expect(selected.length).toBe(1);
+  });
+});
+
+describe('config init', () => {
+  it('writes and loads default config', async () => {
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'repotoprompt-'));
+    const created = await writeInitialConfig(dir);
+    expect(created).toContain('.repotopromptrc.json');
+    expect(created).toContain('.repotopromptignore');
+    const config = await loadConfig(dir);
+    expect(config.mode).toBe('focused');
+    expect(config.target).toBe('chatgpt');
   });
 });

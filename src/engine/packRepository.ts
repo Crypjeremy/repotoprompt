@@ -77,7 +77,13 @@ export async function packRepository(options: PackOptions): Promise<PackResult> 
     diffSummary
   });
 
-  if (!options.dryRun) {
+  if (options.print) {
+    process.stdout.write(result.markdown);
+    if (!result.markdown.endsWith('\n')) process.stdout.write('\n');
+  }
+
+  if (!options.dryRun && !options.print) {
+    await fs.mkdir(path.dirname(outputPath), { recursive: true });
     await fs.writeFile(outputPath, result.markdown, 'utf8');
     if (options.copy) {
       const ok = await copyToClipboard(result.markdown);

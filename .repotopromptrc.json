@@ -1,0 +1,17 @@
+{
+  "mode": "focused",
+  "target": "chatgpt",
+  "budget": 30000,
+  "maxFileKb": 256,
+  "defaultOutput": "repotoprompt-output.md",
+  "alwaysInclude": [
+    "README.md",
+    "package.json"
+  ],
+  "alwaysExclude": [
+    ".env*",
+    "private/**",
+    "node_modules/**",
+    "dist/**"
+  ]
+}

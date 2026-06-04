@@ -3,6 +3,7 @@ export type Target = 'markdown' | 'chatgpt' | 'claude' | 'cursor' | 'gemini' | '
 
 export type CliOptions = {
   output: string;
+  outputDir?: string;
   include?: string;
   exclude?: string;
   maxFileKb: string;
@@ -14,6 +15,25 @@ export type CliOptions = {
   diff?: boolean;
   since?: string;
   stats?: boolean;
+  copy?: boolean;
+  open?: boolean;
+  openWith?: string;
+  failOnSecret?: boolean;
+  interactive?: boolean;
+  print?: boolean;
+  securityReport?: boolean;
+  explain?: boolean;
+};
+
+export type RepoToPromptConfig = {
+  mode?: Mode;
+  target?: Target;
+  budget?: number;
+  maxFileKb?: number;
+  defaultOutput?: string;
+  outputDir?: string;
+  alwaysInclude?: string[];
+  alwaysExclude?: string[];
   copy?: boolean;
   open?: boolean;
   openWith?: string;
@@ -38,6 +58,7 @@ export type PackOptions = {
   open: boolean;
   openWith?: string;
   failOnSecret: boolean;
+  print: boolean;
 };
 
 export type RepoFile = {

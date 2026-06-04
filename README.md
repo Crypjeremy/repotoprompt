@@ -2,6 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/repotoprompt.svg)](https://www.npmjs.com/package/repotoprompt)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/Crypjeremy/repotoprompt.svg?style=social)](https://github.com/Crypjeremy/repotoprompt)
 
 **Give AI the right files, not every file.**
 
@@ -9,15 +10,43 @@ RepoToPrompt is an open-source CLI that turns a local repository into a task-awa
 
 Instead of dumping your whole codebase blindly, RepoToPrompt scans your project, respects ignore files, skips secrets, scores files by relevance, applies a mode and token budget, then writes a clean markdown or JSON context file.
 
-## Why this exists
+## Install
 
-AI coding gets better when the model has the right context. Manually copying files is slow, messy, and easy to get wrong. Whole-repo dumps waste tokens and often include irrelevant files.
+Run without installing:
 
-RepoToPrompt helps you package context around the task you are trying to solve:
+```bash
+npx repotoprompt .
+```
+
+Install globally:
+
+```bash
+npm install -g repotoprompt
+repotoprompt .
+```
+
+## Quick start
 
 ```bash
 repotoprompt . --goal "Add dark mode to the dashboard" --mode focused --budget 30000 --target chatgpt
 ```
+
+Open the result in VS Code:
+
+```bash
+repotoprompt . --goal "Explain this project" --open-with code --open
+```
+
+## What's new in v1.1
+
+- Interactive mode with `--interactive` / `-I`
+- `repotoprompt init` for project config
+- `.repotopromptrc.json` support
+- `--security-report` for skipped secret/env files
+- `--explain` for inclusion/exclusion reasoning
+- `--print` for stdout/piping workflows
+- `--output-dir` for timestamped context packs
+- npm/GitHub metadata polish
 
 ## Features
 
@@ -26,41 +55,64 @@ repotoprompt . --goal "Add dark mode to the dashboard" --mode focused --budget 3
 - Token budgeting with `--budget`
 - Git diff/review mode with `--diff` and `--since main`
 - `.gitignore` and `.repotopromptignore` support
+- `.repotopromptrc.json` project defaults
 - Built-in binary, build-output, dependency, image, and lockfile exclusions
 - Secret/env file skipping by default
-- Framework and entrypoint detection
+- Security reporting with `--security-report`
 - File relevance scoring with reasons
+- Framework and entrypoint detection
 - Output targets: `chatgpt`, `claude`, `cursor`, `gemini`, `markdown`, `json`
-- `--dry-run`, `--stats`, `--copy`, and `--open`
+- `--dry-run`, `--stats`, `--copy`, `--open`, `--print`, and `--explain`
 - Cross-platform Node CLI
 
-## Install
+## Commands
 
-### Run without installing
-
-```bash
-npx repotoprompt .
-```
-
-### Install globally
+### Interactive mode
 
 ```bash
-npm install -g repotoprompt
-repotoprompt .
+repotoprompt --interactive
 ```
 
-### Local development
+or:
 
 ```bash
-git clone https://github.com/crypjeremy/repotoprompt.git
-cd repotoprompt
-npm install
-npm run build
-npm link
-repotoprompt --help
+repotoprompt -I
 ```
 
-## Usage
+The CLI asks for repo path, goal, mode, target, token budget, output, clipboard, and open behavior.
+
+### Initialize project config
+
+```bash
+repotoprompt init
+```
+
+Creates:
+
+```text
+.repotopromptrc.json
+.repotopromptignore
+```
+
+Example config:
+
+```json
+{
+  "mode": "focused",
+  "target": "chatgpt",
+  "budget": 30000,
+  "maxFileKb": 256,
+  "defaultOutput": "repotoprompt-output.md",
+  "alwaysInclude": ["README.md", "package.json"],
+  "alwaysExclude": [".env*", "private/**", "node_modules/**", "dist/**"]
+}
+```
+
+Overwrite existing config:
+
+```bash
+repotoprompt init --force
+```
 
 ### Basic context pack
 
@@ -133,6 +185,52 @@ repotoprompt . --target gemini
 repotoprompt . --dry-run --stats
 ```
 
+### Explain what happened
+
+```bash
+repotoprompt . --goal "Update README" --explain --stats
+```
+
+This prints included files, relevance scores, reasons, and skipped files.
+
+### Security report
+
+```bash
+repotoprompt . --security-report
+```
+
+This reports possible secret/env files skipped before output generation.
+
+Fail instead of skipping:
+
+```bash
+repotoprompt . --fail-on-secret
+```
+
+### Print to stdout
+
+```bash
+repotoprompt . --goal "Explain this repo" --print
+```
+
+Pipe to clipboard on Windows:
+
+```powershell
+repotoprompt . --goal "Explain this repo" --print | clip
+```
+
+### Timestamped outputs
+
+```bash
+repotoprompt . --output-dir .repotoprompt/outputs
+```
+
+Creates files like:
+
+```text
+.repotoprompt/outputs/2026-06-02_15-30-12-explain-this-project.md
+```
+
 ### Copy and open output
 
 ```bash
@@ -156,13 +254,13 @@ repotoprompt . --target json --output context.json
 
 ## Modes
 
-| Mode      | Use it for               | Behavior                                                 |
-| --------- | ------------------------ | -------------------------------------------------------- |
-| `full`    | Whole repo understanding | Includes all safe scannable files                        |
-| `focused` | Most normal coding tasks | Prioritizes goal/config/entrypoint files                 |
-| `minimal` | Small prompts            | Keeps only high-scoring files                            |
-| `debug`   | Bug fixing               | Prioritizes tests, handlers, routes, error-related files |
-| `review`  | Pre-PR review            | Prioritizes changed files and nearby context             |
+| Mode | Use it for | Behavior |
+|---|---|---|
+| `full` | Whole repo understanding | Includes all safe scannable files |
+| `focused` | Most normal coding tasks | Prioritizes goal/config/entrypoint files |
+| `minimal` | Small prompts | Keeps only high-scoring files |
+| `debug` | Bug fixing | Prioritizes tests, handlers, routes, error-related files |
+| `review` | Pre-PR review | Prioritizes changed files and nearby context |
 
 ## Output structure
 
@@ -172,6 +270,7 @@ Markdown packs include:
 - context strategy
 - detected framework/language
 - entrypoints and config files
+- security notes
 - warnings
 - included file tree
 - file relevance table
@@ -185,7 +284,8 @@ RepoToPrompt merges:
 1. Built-in safe defaults
 2. `.gitignore`
 3. `.repotopromptignore`
-4. CLI `--exclude` patterns
+4. `.repotopromptrc.json` `alwaysExclude`
+5. CLI `--exclude` patterns
 
 Create `.repotopromptignore` for context-specific exclusions:
 
@@ -197,23 +297,21 @@ large-fixtures/**
 
 ## Secret safety
 
-RepoToPrompt skips `.env*` files and common secret patterns by default. Use:
-
-```bash
-repotoprompt . --fail-on-secret
-```
-
-when you want the command to fail instead of silently skipping suspicious files.
+RepoToPrompt skips `.env*` files and common secret patterns by default.
 
 No secret scanner is perfect. Always review generated context before pasting it into external tools.
 
 ## Development
 
 ```bash
+git clone https://github.com/Crypjeremy/repotoprompt.git
+cd repotoprompt
 npm install
 npm run check
 npm run build
 npm test
+npm link
+repotoprompt --help
 ```
 
 Run locally:
@@ -222,7 +320,7 @@ Run locally:
 npm run dev -- . --goal "Explain this repo" --dry-run --stats
 ```
 
-## Roadmap after v1
+## Roadmap
 
 - Better import/dependency tracing
 - Interactive file picker
@@ -230,6 +328,10 @@ npm run dev -- . --goal "Explain this repo" --dry-run --stats
 - Tokenizer-specific model estimates
 - MCP/server mode
 - GitHub Action for PR context packs
+
+## Maintainer
+
+Created and maintained by [crypjeremy](https://github.com/Crypjeremy). Contributions are welcome.
 
 ## License
 

@@ -26,6 +26,7 @@ function targetInstruction(target: Target): string {
 
 export function formatMarkdown(input: FormatInput): PackResult {
   const totalBytes = input.files.reduce((sum, file) => sum + file.sizeBytes, 0);
+  const secretSkipped = input.skipped.filter(file => file.reason.includes('secret'));
   const parts: string[] = [];
 
   parts.push('# RepoToPrompt Context Pack');
@@ -57,6 +58,14 @@ export function formatMarkdown(input: FormatInput): PackResult {
   if (input.framework.entrypoints.length) parts.push(`- Entrypoints: ${input.framework.entrypoints.join(', ')}`);
   if (input.framework.configFiles.length) parts.push(`- Important config: ${input.framework.configFiles.join(', ')}`);
   parts.push('');
+
+  if (secretSkipped.length) {
+    parts.push('## Security Notes');
+    parts.push('');
+    parts.push(`${secretSkipped.length} possible secret/env file(s) were excluded from this context pack.`);
+    parts.push('Review generated context before pasting it into external AI tools.');
+    parts.push('');
+  }
 
   if (input.diffSummary) {
     parts.push('## Git Diff Summary');
